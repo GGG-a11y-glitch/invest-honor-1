@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#000000">
-    <title>Honor Invest Real-Time</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>Honor Invest - Real Data</title>
     <style>
         :root {
             --bg-black: #000000;
@@ -18,20 +17,14 @@
             --card-bg: #0c0c0c;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; }
         body { background-color: var(--bg-black); color: var(--text-primary); padding-bottom: 50px; }
 
-        /* Loader & Sync Status */
-        #sync-indicator { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 3px; 
-            background: #222; z-index: 1000; 
-        }
-        #sync-progress { 
-            width: 0%; height: 100%; background: var(--honor-blue); 
-            transition: width 0.3s; 
-        }
-
         .container { padding: 18px; max-width: 500px; margin: auto; }
+
+        /* Sync Status Bar */
+        #sync-bar { position: fixed; top: 0; left: 0; width: 100%; height: 3px; background: #111; z-index: 1000; }
+        #sync-fill { width: 0%; height: 100%; background: var(--honor-blue); transition: width 0.3s; }
 
         /* Hero */
         .hero { 
@@ -42,8 +35,7 @@
         .hero-title { color: var(--text-dim); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; }
         .hero-value { font-size: 2.3rem; font-weight: 800; margin: 5px 0; }
         .hero-pl { font-size: 0.9rem; font-weight: 600; }
-        .last-update { font-size: 0.6rem; color: var(--text-dim); margin-top: 10px; }
-
+        
         .btn-edit { 
             position: absolute; top: 20px; right: 20px; 
             color: var(--honor-blue); font-size: 0.7rem; font-weight: bold; 
@@ -56,52 +48,49 @@
             background: var(--card-bg); border-radius: 22px; padding: 16px; 
             border: 1px solid #161616; position: relative;
         }
-        .ticker { font-weight: 800; font-size: 0.75rem; color: var(--honor-blue); display: block; margin-bottom: 10px; }
+        .ticker { font-weight: 800; font-size: 0.75rem; color: var(--honor-blue); margin-bottom: 8px; display: block; }
         .price-live { font-size: 1.1rem; font-weight: 600; }
-        .pl-badge { font-size: 0.75rem; margin-top: 4px; font-weight: bold; }
+        .pl-badge { font-size: 0.7rem; margin-top: 4px; font-weight: bold; }
 
-        /* Editing mode */
+        /* Edit Fields */
         .edit-fields { display: none; margin-top: 12px; border-top: 1px solid #222; padding-top: 10px; }
         .input-group { margin-bottom: 8px; }
         .input-group label { display: block; font-size: 0.6rem; color: var(--text-dim); margin-bottom: 2px; }
-        .qty-input { width: 100%; background: #000; border: 1px solid #333; color: #fff; padding: 6px; border-radius: 8px; font-size: 0.8rem; }
+        .qty-input { width: 100%; background: #000; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 8px; font-size: 0.8rem; }
 
-        /* Bonds Scroller */
+        /* Scroller */
         .scroller { display: flex; overflow-x: auto; gap: 12px; padding: 10px 0; scrollbar-width: none; }
         .scroller-card { min-width: 150px; flex-shrink: 0; }
 
         .pos { color: var(--status-green); }
         .neg { color: var(--status-red); }
-        .section-header { font-size: 0.8rem; color: var(--text-dim); margin: 20px 0 10px; letter-spacing: 1px; }
+        .section-header { font-size: 0.8rem; color: var(--text-dim); margin: 20px 0 10px; text-transform: uppercase; }
+        
+        #update-info { font-size: 0.6rem; color: #444; margin-top: 15px; text-align: center; }
     </style>
 </head>
 <body>
 
-<div id="sync-indicator"><div id="sync-progress"></div></div>
+<div id="sync-bar"><div id="sync-fill"></div></div>
 
 <div class="container">
     <div class="hero">
         <div class="btn-edit" onclick="toggleEdit()" id="edit-text">MODIFICA</div>
-        <div class="hero-title">Patrimonio Reale Live</div>
+        <div class="hero-title">Patrimonio Reale</div>
         <div class="hero-value" id="total-val">€ 0,00</div>
-        <div class="hero-pl" id="total-pl">In attesa di dati...</div>
-        <div class="last-update" id="last-update">Aggiornamento: --:--:--</div>
+        <div class="hero-pl" id="total-pl">Caricamento dati...</div>
     </div>
 
-    <div class="section-header">AZIONARIO (REAL-TIME)</div>
+    <div class="section-header">Core Equity</div>
     <div class="grid" id="main-grid"></div>
 
-    <div class="section-header">LIQUIDITÀ E BOND</div>
+    <div class="section-header">Stabilizzatori</div>
     <div class="scroller" id="bond-scroller"></div>
 
-    <div class="section-header">COMMENTO MACRO</div>
-    <div id="macro-advisor" style="background: #0a0a0a; padding: 15px; border-radius: 18px; border: 1px solid #111; font-size: 0.8rem; color: #bbb; line-height: 1.4;">
-        I dati sono recuperati tramite API finanziaria. I prezzi degli ETF su Borsa Italiana potrebbero avere un ritardo di 15-20 minuti rispetto al tick-by-tick professionale.
-    </div>
+    <div id="update-info">Dati da Yahoo Finance via AllOrigins Proxy</div>
 </div>
 
 <script>
-    // Lista ETF con Ticker reali di Yahoo Finance
     const etfConfig = [
         { id: 'VWCE.MI', type: 'grid' },
         { id: 'IWMO.MI', type: 'grid' },
@@ -113,8 +102,8 @@
     ];
 
     let isEditing = false;
-    let portfolio = JSON.parse(localStorage.getItem('honor_portfolio_real')) || {};
-    let livePrices = {};
+    let portfolio = JSON.parse(localStorage.getItem('honor_invest_v2')) || {};
+    let livePrices = JSON.parse(localStorage.getItem('honor_last_prices')) || {};
 
     function toggleEdit() {
         isEditing = !isEditing;
@@ -128,38 +117,37 @@
 
     function savePortfolio() {
         etfConfig.forEach(etf => {
-            const qty = document.getElementById(`qty-${etf.id}`).value;
-            const pmc = document.getElementById(`pmc-${etf.id}`).value;
-            portfolio[etf.id] = { qty: parseFloat(qty) || 0, pmc: parseFloat(pmc) || 0 };
+            portfolio[etf.id] = {
+                qty: parseFloat(document.getElementById(`qty-${etf.id}`).value) || 0,
+                pmc: parseFloat(document.getElementById(`pmc-${etf.id}`).value) || 0,
+                manual: parseFloat(document.getElementById(`manual-${etf.id}`).value) || 0
+            };
         });
-        localStorage.setItem('honor_portfolio_real', JSON.stringify(portfolio));
+        localStorage.setItem('honor_invest_v2', JSON.stringify(portfolio));
     }
 
-    // Funzione CORE: Recupero prezzi reali da Yahoo Finance
     async function fetchAllPrices() {
-        const progress = document.getElementById('sync-progress');
-        progress.style.width = '10%';
-        
-        let totalCurrent = 0;
-        let totalInvested = 0;
+        const fill = document.getElementById('sync-fill');
+        fill.style.width = '20%';
 
-        for (let i = 0; i < etfConfig.length; i++) {
-            const ticker = etfConfig[i].id;
+        for (const etf of etfConfig) {
             try {
-                // Utilizzo di un proxy CORS pubblico per bypassare i blocchi del browser
-                const response = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}`);
+                // Utilizzo di un proxy CORS per recuperare i dati da Yahoo Finance
+                const targetUrl = encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${etf.id}`);
+                const response = await fetch(`https://api.allorigins.win/get?url=${targetUrl}`);
                 const data = await response.json();
-                const price = data.chart.result[0].meta.regularMarketPrice;
-                livePrices[ticker] = price;
+                const json = JSON.parse(data.contents);
+                const price = json.chart.result[0].meta.regularMarketPrice;
+                if(price) livePrices[etf.id] = price;
             } catch (e) {
-                console.error("Errore recupero " + ticker, e);
-                livePrices[ticker] = livePrices[ticker] || 0; // Mantieni vecchio prezzo se errore
+                console.error("Errore per " + etf.id + ": API limit o CORS.");
             }
-            progress.style.width = ((i + 1) / etfConfig.length * 100) + '%';
         }
-
+        
+        localStorage.setItem('honor_last_prices', JSON.stringify(livePrices));
+        fill.style.width = '100%';
         renderUI();
-        setTimeout(() => progress.style.width = '0%', 1000);
+        setTimeout(() => fill.style.width = '0%', 800);
     }
 
     function renderUI() {
@@ -171,8 +159,10 @@
         let totalInvested = 0;
 
         etfConfig.forEach(etf => {
-            const price = livePrices[etf.id] || 0;
-            const data = portfolio[etf.id] || { qty: 0, pmc: 0 };
+            const data = portfolio[etf.id] || { qty: 0, pmc: 0, manual: 0 };
+            
+            // Se l'API fallisce, usa il prezzo manuale se inserito, altrimenti l'ultimo salvato
+            const price = data.manual > 0 ? data.manual : (livePrices[etf.id] || 0);
             
             const currentVal = price * data.qty;
             const investedVal = data.pmc * data.qty;
@@ -186,19 +176,23 @@
             const cardHtml = `
                 <div class="card">
                     <span class="ticker">${etf.id}</span>
-                    <div class="price-live">€${price.toFixed(2)}</div>
+                    <div class="price-live">€${price > 0 ? price.toFixed(2) : '---'}</div>
                     <div class="pl-badge ${isProfit?'pos':'neg'}">
                         ${isProfit?'+':''}${plPerc}% (${isProfit?'+':''}${plEuro}€)
                     </div>
                     
-                    <div class="edit-fields" id="fields-${etf.id}">
+                    <div class="edit-fields">
                         <div class="input-group">
-                            <label>Quote</label>
+                            <label>Quote Possedute</label>
                             <input type="number" id="qty-${etf.id}" class="qty-input" value="${data.qty}" step="any">
                         </div>
                         <div class="input-group">
-                            <label>PMC (€)</label>
+                            <label>PMC (Prezzo d'acquisto)</label>
                             <input type="number" id="pmc-${etf.id}" class="qty-input" value="${data.pmc}" step="any">
+                        </div>
+                        <div class="input-group">
+                            <label>Prezzo Manuale (se errore API)</label>
+                            <input type="number" id="manual-${etf.id}" class="qty-input" value="${data.manual}" step="any">
                         </div>
                     </div>
                 </div>
@@ -208,19 +202,18 @@
             else scroll.innerHTML += `<div class="scroller-card">${cardHtml}</div>`;
         });
 
-        // Update Hero
         document.getElementById('total-val').innerText = `€ ${totalCurrent.toLocaleString('it-IT', {minimumFractionDigits:2})}`;
         const totalPLEuro = (totalCurrent - totalInvested).toFixed(2);
         const totalPLPerc = totalInvested > 0 ? ((totalCurrent - totalInvested) / totalInvested * 100).toFixed(2) : 0;
         const heroPL = document.getElementById('total-pl');
-        heroPL.innerText = `P&L Totale: ${totalPLEuro}€ (${totalPLPerc}%)`;
+        heroPL.innerText = `P&L: ${totalPLEuro >= 0 ? '+' : ''}${totalPLEuro}€ (${totalPLPerc}%)`;
         heroPL.className = `hero-pl ${totalPLEuro >= 0 ? 'pos' : 'neg'}`;
-        document.getElementById('last-update').innerText = `Aggiornamento: ${new Date().toLocaleTimeString('it-IT')}`;
     }
 
-    // Caricamento iniziale e loop ogni 60 secondi
+    // Esecuzione
     fetchAllPrices();
-    setInterval(() => { if(!isEditing) fetchAllPrices(); }, 60000);
+    // Refresh ogni 2 minuti
+    setInterval(fetchAllPrices, 120000);
 </script>
 
 </body>
