@@ -5,87 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#000000">
-    <title>Honor Invest Pro</title>
+    <title>Honor Invest Strategic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-black: #000000;
-            --text-primary: #FFFFFF;
-            --text-dim: #777777;
+            --bg: #000000;
+            --card: #0c0c0c;
             --honor-blue: #3b82f6;
-            --status-green: #00e676;
-            --status-red: #ff3b3b;
-            --card-bg: #0c0c0c;
-            --glass: rgba(255, 255, 255, 0.03);
+            --green: #00e676;
+            --red: #ff3b3b;
+            --dim: #777777;
+            --radius: 26px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; color: white; }
-        body { background-color: var(--bg-black); overflow-x: hidden; padding-bottom: 40px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; color: white; }
+        body { background-color: var(--bg); padding-bottom: 60px; }
 
-        .container { padding: 18px; max-width: 500px; margin: auto; }
+        .container { padding: 20px; max-width: 500px; margin: auto; }
 
         /* Sync Bar */
         #sync-bar { position: fixed; top: 0; left: 0; width: 100%; height: 3px; background: #111; z-index: 2000; }
         #sync-fill { width: 0%; height: 100%; background: var(--honor-blue); transition: width 0.3s; }
 
-        /* Header / Search Area Style */
-        .header-area { margin-bottom: 20px; border-radius: 18px; background: #111; padding: 10px 15px; border: 1px solid #222; }
-
-        /* Main Hero - 26px corners */
+        /* Top Hero - Portfolio Status */
         .hero { 
             background: linear-gradient(135deg, #111, #000); 
-            border-radius: 26px; padding: 25px; margin-bottom: 25px; 
+            border-radius: var(--radius); padding: 30px 20px; margin-bottom: 20px; 
             border: 1px solid #1a1a1a; position: relative;
-            backdrop-filter: blur(15px);
         }
-        .hero-title { color: var(--text-dim); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; }
-        .hero-value { font-size: 2.5rem; font-weight: 800; margin: 5px 0; letter-spacing: -1px; }
-        .hero-pl { font-size: 0.9rem; font-weight: 600; padding: 4px 0; }
-
-        .btn-action { 
-            position: absolute; top: 20px; right: 20px; 
-            color: var(--honor-blue); font-size: 0.7rem; font-weight: bold; 
-            border: 1px solid var(--honor-blue); padding: 8px 14px; border-radius: 12px;
-            background: transparent; cursor: pointer;
+        .hero-title { color: var(--dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; }
+        .hero-value { font-size: 2.8rem; font-weight: 800; margin: 5px 0; }
+        
+        /* Market Sentiment Badge */
+        .sentiment-badge { 
+            display: inline-block; padding: 6px 14px; border-radius: 50px; 
+            font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
+            margin-top: 10px; background: rgba(255,255,255,0.05);
         }
 
-        /* 2x2 Grid */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
-        .card { 
-            background: var(--card-bg); border-radius: 20px; padding: 18px; 
-            border: 1px solid #1a1a1a; transition: transform 0.1s;
+        /* Section Titles */
+        .section-header { 
+            font-size: 0.85rem; font-weight: 700; color: var(--dim); 
+            margin: 25px 0 15px 5px; text-transform: uppercase; display: flex; justify-content: space-between;
         }
-        .card:active { transform: scale(0.96); }
-        .ticker { font-weight: 800; font-size: 0.75rem; color: var(--honor-blue); margin-bottom: 10px; display: block; }
-        .price-live { font-size: 1.3rem; font-weight: 700; }
-        .pl-badge { font-size: 0.75rem; margin-top: 5px; font-weight: bold; }
 
-        /* Horizontal Scroller */
-        .scroller-wrapper { margin-bottom: 25px; }
-        .scroller { display: flex; overflow-x: auto; gap: 12px; padding-bottom: 10px; scrollbar-width: none; }
-        .scroller::-webkit-scrollbar { display: none; }
-        .scroll-card { min-width: 140px; background: #0a0a0a; padding: 15px; border-radius: 20px; border: 1px solid #161616; flex-shrink: 0; }
+        /* Asset Cards - Vertical Flow */
+        .asset-list { display: flex; flex-direction: column; gap: 12px; }
+        .asset-card { 
+            background: var(--card); border-radius: var(--radius); padding: 20px;
+            border: 1px solid #161616; display: flex; justify-content: space-between; align-items: center;
+            transition: transform 0.1s;
+        }
+        .asset-card:active { transform: scale(0.97); }
+        .asset-info h4 { color: var(--honor-blue); font-size: 0.9rem; font-weight: 800; }
+        .asset-info p { color: var(--dim); font-size: 0.7rem; }
+        .asset-stats { text-align: right; }
+        .price { font-size: 1.1rem; font-weight: 700; }
+        .pl-tag { font-size: 0.75rem; font-weight: bold; margin-top: 2px; }
 
-        /* Edit Overlay - Glassmorphism */
-        #edit-modal {
+        /* Advisor Insights Section */
+        .insight-card { 
+            background: #080808; border-radius: var(--radius); padding: 20px; 
+            border: 1px dotted #333; margin-top: 20px;
+        }
+        .insight-item { margin-bottom: 15px; }
+        .insight-item h5 { font-size: 0.75rem; color: var(--honor-blue); margin-bottom: 5px; text-transform: uppercase; }
+        .insight-item p { font-size: 0.85rem; color: #ccc; line-height: 1.4; }
+
+        /* Modal Glassmorphism */
+        .modal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(20px); display: none;
-            z-index: 3000; padding: 20px; overflow-y: auto;
+            backdrop-filter: blur(15px); display: none; z-index: 3000;
+            padding: 25px; align-items: center; justify-content: center;
         }
-        .modal-content { background: #111; border-radius: 26px; padding: 25px; border: 1px solid #333; max-width: 450px; margin: auto; }
-        .input-row { margin-bottom: 15px; border-bottom: 1px solid #222; padding-bottom: 15px; }
-        .input-row h4 { font-size: 0.8rem; color: var(--honor-blue); margin-bottom: 10px; }
-        input { 
-            width: 100%; background: #000; border: 1px solid #333; padding: 10px; 
-            border-radius: 10px; font-size: 0.9rem; margin-top: 5px; 
+        .modal-content { 
+            background: #111; border-radius: var(--radius); padding: 30px; 
+            border: 1px solid #333; width: 100%; max-width: 400px;
         }
-        label { font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; }
 
-        /* Utilities */
-        .pos { color: var(--status-green); }
-        .neg { color: var(--status-red); }
-        .section-title { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 12px; padding-left: 5px; text-transform: uppercase; letter-spacing: 1px; }
-
-        .macro-card { background: #0a0a0a; border-left: 4px solid var(--honor-blue); padding: 15px; border-radius: 0 15px 15px 0; margin-top: 20px; font-size: 0.85rem; }
+        .btn-manage { background: transparent; border: 1px solid var(--honor-blue); color: var(--honor-blue); padding: 5px 15px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; }
+        .pos { color: var(--green); }
+        .neg { color: var(--red); }
     </style>
 </head>
 <body>
@@ -93,159 +93,183 @@
 <div id="sync-bar"><div id="sync-fill"></div></div>
 
 <div class="container">
-    <div class="header-area">
-        <span style="font-size: 0.8rem; color: var(--text-dim);">Honor Minimalist Framework</span>
-    </div>
-
+    <!-- HERO SECTION -->
     <div class="hero">
-        <button class="btn-action" onclick="openEdit()">GESTISCI</button>
-        <div class="hero-title">Patrimonio Stimato</div>
+        <div class="hero-title">Total Wealth</div>
         <div class="hero-value" id="total-val">€ 0,00</div>
-        <div class="hero-pl" id="total-pl">Dati in aggiornamento...</div>
+        <div class="hero-pl" id="total-pl">--</div>
+        <div id="market-status" class="sentiment-badge">ANALIZZANDO MERCATO...</div>
+        <button class="btn-manage" style="position:absolute; top:30px; right:20px" onclick="openEdit()">GESTISCI</button>
     </div>
 
-    <div class="section-title">Core Portfolio</div>
-    <div class="grid" id="main-grid"></div>
-
-    <div class="section-title">Liquidità & Bond</div>
-    <div class="scroller-wrapper">
-        <div class="scroller" id="scroll-grid"></div>
+    <!-- ACTIVE PORTFOLIO -->
+    <div class="section-header">
+        <span>Il Tuo Portafoglio</span>
+        <span id="update-timer" style="font-size: 0.6rem; font-weight: 400;">Update: --</span>
+    </div>
+    <div class="asset-list" id="asset-list">
+        <!-- Asset caricati via JS -->
     </div>
 
-    <div class="section-title">Commento Macro</div>
-    <div class="macro-card">
-        <p id="macro-text">L'app monitora i prezzi tramite API Yahoo/CorsProxy. In caso di errore API, usa il tasto GESTISCI per aggiornare i prezzi manualmente.</p>
+    <!-- MACRO & ADVISOR INSIGHTS -->
+    <div class="section-header">Advisor Macro Station</div>
+    <div class="insight-card">
+        <div class="insight-item">
+            <h5>🏦 BCE & XEON Hint</h5>
+            <p id="bce-hint">Il tasso €STR è attualmente al 3.9%. Con l'attesa di tagli dei tassi, il rendimento di <strong>XEON</strong> calerà. Considera di bloccare rendimenti sui bond lunghi (<strong>IBGL</strong>) se prevedi tagli rapidi.</p>
+        </div>
+        <div class="insight-item">
+            <h5>📅 Eventi Impattanti</h5>
+            <p id="events-list">● Martedì: Inflazione USA (CPI) - Volatilità alta su VWCE.<br>● Giovedì: Riunione BCE - Focus su tassi di deposito.</p>
+        </div>
+        <div class="insight-item">
+            <h5>⚖️ Ribilanciamento</h5>
+            <p id="rebalance-hint">SGLN (Oro) è ai massimi. Se la tua quota supera il 10%, vendi una parte per comprare XDEQ (Quality) per protezione.</p>
+        </div>
     </div>
 </div>
 
-<!-- Modal di Modifica -->
-<div id="edit-modal">
-    <div class="modal-content">
-        <h2 style="margin-bottom: 20px;">Gestione Asset</h2>
-        <div id="edit-list"></div>
-        <button onclick="saveAll()" style="width:100%; padding:15px; background:var(--honor-blue); border:none; border-radius:15px; font-weight:bold; margin-top:20px;">SALVA E AGGIORNA</button>
-        <button onclick="closeEdit()" style="width:100%; padding:10px; background:transparent; border:none; color:var(--text-dim); margin-top:10px;">Chiudi</button>
+<!-- INFO MODAL -->
+<div class="modal" id="modal" onclick="closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h2 id="m-ticker" style="color:var(--honor-blue); font-size:1.5rem"></h2>
+        <h3 id="m-name" style="font-size:0.9rem; color:var(--dim); margin-bottom:20px"></h3>
+        <p id="m-desc" style="font-size:0.9rem; line-height:1.5; color:#ddd; margin-bottom:20px"></p>
+        <div style="background:#000; padding:15px; border-radius:15px; font-size:0.8rem">
+            <strong>Previsione Advisor:</strong> <span id="m-forecast"></span>
+        </div>
+        <button onclick="closeModal()" style="width:100%; padding:15px; background:var(--honor-blue); border:none; border-radius:18px; font-weight:bold; margin-top:20px">CHIUDI</button>
+    </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal" id="edit-modal">
+    <div class="modal-content" style="max-height:80vh; overflow-y:auto">
+        <h2 style="margin-bottom:20px">Inserimento Dati</h2>
+        <div id="edit-inputs"></div>
+        <button onclick="saveData()" style="width:100%; padding:15px; background:var(--green); color:black; border:none; border-radius:18px; font-weight:bold; margin-top:20px">SALVA TUTTO</button>
     </div>
 </div>
 
 <script>
-    const ETFs = [
-        { id: 'VWCE.MI', type: 'grid' },
-        { id: 'IWMO.MI', type: 'grid' },
-        { id: 'XDEQ.MI', type: 'grid' },
-        { id: 'SGLN.MI', type: 'grid' },
-        { id: 'XEON.MI', type: 'scroll' },
-        { id: 'IBGL.MI', type: 'scroll' },
-        { id: 'VGEA.MI', type: 'scroll' }
-    ];
+    const ETF_INFO = {
+        'VWCE.MI': { n: 'Vanguard All-World', d: 'L\'ETF che investe in 3700+ aziende globali. È il cuore del portafoglio.', f: 'Trend rialzista moderato supportato da utili tech.' },
+        'IWMO.MI': { n: 'MSCI World Momentum', d: 'Investe nei titoli che hanno mostrato il trend di crescita più forte.', f: 'Rischio di rotazione settoriale, monitorare PMC.' },
+        'XDEQ.MI': { n: 'MSCI World Quality', d: 'Aziende con bilanci solidi e profitti costanti. Protezione nei ribassi.', f: 'Ottimo hold in questa fase di incertezza tassi.' },
+        'SGLN.MI': { n: 'Physical Gold', d: 'Replica il prezzo dell\'oro. Bene rifugio per eccellenza.', f: 'Strong Hold come assicurazione geopolitica.' },
+        'XEON.MI': { n: 'Xtrackers Overnight', d: 'Rendimento monetario basato sui tassi BCE (Eurostr).', f: 'Rendimento in calo nei prossimi mesi causa tagli BCE.' },
+        'IBGL.MI': { n: 'Euro Gov Bond 15-25y', d: 'Titoli di stato Eurozona a lunghissima scadenza.', f: 'Molto volatile. Guadagnerà molto se i tassi scendono.' },
+        'VGEA.MI': { n: 'Euro Gov Bond All', d: 'Tutti i titoli di stato Eurozona. Stabilità del capitale.', f: 'Asset stabile, poco sensibile nel breve periodo.' }
+    };
 
-    let portfolio = JSON.parse(localStorage.getItem('honor_invest_data')) || {};
-    let currentPrices = {};
-
-    function openEdit() {
-        const list = document.getElementById('edit-list');
-        list.innerHTML = '';
-        ETFs.forEach(etf => {
-            const d = portfolio[etf.id] || { qty: 0, pmc: 0, price: 0 };
-            list.innerHTML += `
-                <div class="input-row">
-                    <h4>${etf.id}</h4>
-                    <label>Quantità</label>
-                    <input type="number" id="edit-qty-${etf.id}" value="${d.qty}" step="any">
-                    <label>PMC (€)</label>
-                    <input type="number" id="edit-pmc-${etf.id}" value="${d.pmc}" step="any">
-                    <label>Prezzo Attuale Manuale (Opzionale)</label>
-                    <input type="number" id="edit-price-${etf.id}" value="${d.price}" step="any" placeholder="Usa se API fallisce">
-                </div>
-            `;
-        });
-        document.getElementById('edit-modal').style.display = 'block';
-    }
-
-    function closeEdit() { document.getElementById('edit-modal').style.display = 'none'; }
-
-    function saveAll() {
-        ETFs.forEach(etf => {
-            portfolio[etf.id] = {
-                qty: parseFloat(document.getElementById(`edit-qty-${etf.id}`).value) || 0,
-                pmc: parseFloat(document.getElementById(`edit-pmc-${etf.id}`).value) || 0,
-                price: parseFloat(document.getElementById(`edit-price-${etf.id}`).value) || 0
-            };
-        });
-        localStorage.setItem('honor_invest_data', JSON.stringify(portfolio));
-        closeEdit();
-        fetchPrices();
-    }
+    let portfolio = JSON.parse(localStorage.getItem('honor_invest_v3')) || {};
+    let prices = {};
 
     async function fetchPrices() {
         const fill = document.getElementById('sync-fill');
         fill.style.width = '30%';
-        
-        for (const etf of ETFs) {
+        for (let t in ETF_INFO) {
             try {
-                // Nuova strategia: Usiamo corsproxy.io che è più stabile
-                const res = await fetch(`https://corsproxy.io/?https://query1.finance.yahoo.com/v8/finance/chart/${etf.id}`);
+                const res = await fetch(`https://corsproxy.io/?https://query1.finance.yahoo.com/v8/finance/chart/${t}`);
                 const data = await res.json();
-                const live = data.chart.result[0].meta.regularMarketPrice;
-                if (live) currentPrices[etf.id] = live;
-            } catch (e) {
-                console.log("Errore API per " + etf.id + ", uso dati manuali/precedenti");
-                // Fallback sul prezzo manuale inserito dall'utente
-                currentPrices[etf.id] = portfolio[etf.id]?.price || currentPrices[etf.id] || 0;
-            }
+                prices[t] = data.chart.result[0].meta.regularMarketPrice;
+            } catch (e) { prices[t] = prices[t] || 0; }
         }
-        
         fill.style.width = '100%';
-        renderUI();
+        render();
         setTimeout(() => fill.style.width = '0%', 800);
     }
 
-    function renderUI() {
-        const grid = document.getElementById('main-grid');
-        const scroll = document.getElementById('scroll-grid');
-        grid.innerHTML = ''; scroll.innerHTML = '';
-        
-        let totalVal = 0;
-        let totalCost = 0;
+    function render() {
+        const list = document.getElementById('asset-list');
+        list.innerHTML = '';
+        let totalVal = 0, totalCost = 0, greenCount = 0;
 
-        ETFs.forEach(etf => {
-            const d = portfolio[etf.id] || { qty: 0, pmc: 0 };
-            const price = currentPrices[etf.id] || 0;
-            
-            const cVal = price * d.qty;
-            const cCost = d.pmc * d.qty;
-            totalVal += cVal;
-            totalCost += cCost;
+        for (let t in ETF_INFO) {
+            const d = portfolio[t] || { q: 0, p: 0 };
+            const curP = prices[t] || 0;
+            const curVal = curP * d.q;
+            const costVal = d.p * d.q;
+            totalVal += curVal;
+            totalCost += costVal;
 
-            const plPerc = d.pmc > 0 ? ((price - d.pmc) / d.pmc * 100).toFixed(2) : "0.00";
-            const isPos = parseFloat(plPerc) >= 0;
+            const plE = (curVal - costVal).toFixed(2);
+            const plP = d.p > 0 ? ((curP - d.p) / d.p * 100).toFixed(2) : 0;
+            if(parseFloat(plP) > 0) greenCount++;
 
-            const html = `
-                <div class="card">
-                    <span class="ticker">${etf.id}</span>
-                    <div class="price-live">€${price.toFixed(2)}</div>
-                    <div class="pl-badge ${isPos?'pos':'neg'}">
-                        ${isPos?'+':''}${plPerc}%
+            list.innerHTML += `
+                <div class="asset-card" onclick="showInfo('${t}')">
+                    <div class="asset-info">
+                        <h4>${t}</h4>
+                        <p>${ETF_INFO[t].n}</p>
+                    </div>
+                    <div class="asset-stats">
+                        <div class="price">€${curP.toFixed(2)}</div>
+                        <div class="pl-tag ${plE>=0?'pos':'neg'}">${plE>=0?'+':''}${plP}% (€${plE})</div>
                     </div>
                 </div>
             `;
+        }
 
-            if(etf.type === 'grid') grid.innerHTML += html;
-            else scroll.innerHTML += `<div class="scroll-card">${html}</div>`;
-        });
-
-        document.getElementById('total-val').innerText = `€ ${totalVal.toLocaleString('it-IT', {minimumFractionDigits:2})}`;
-        const diff = (totalVal - totalCost).toFixed(2);
-        const diffPerc = totalCost > 0 ? ((totalVal - totalCost) / totalCost * 100).toFixed(2) : 0;
-        const plEl = document.getElementById('total-pl');
-        plEl.innerText = `P&L: ${diff}€ (${diffPerc}%)`;
-        plEl.className = `hero-pl ${diff >= 0 ? 'pos' : 'neg'}`;
+        document.getElementById('total-val').innerText = `€ ${totalVal.toLocaleString('it-IT')}`;
+        const tDiff = (totalVal - totalCost).toFixed(2);
+        const tPerc = totalCost > 0 ? (tDiff / totalCost * 100).toFixed(2) : 0;
+        document.getElementById('total-pl').innerHTML = `<span class="${tDiff>=0?'pos':'neg'}">P&L Totale: €${tDiff} (${tPerc}%)</span>`;
+        
+        // Sentiment Logic
+        const status = document.getElementById('market-status');
+        if(greenCount >= 4) {
+            status.innerText = "🐂 Market Phase: BULLISH";
+            status.style.color = "var(--green)";
+        } else {
+            status.innerText = "🐻 Market Phase: CAUTIOUS / BEAR";
+            status.style.color = "var(--honor-blue)";
+        }
+        document.getElementById('update-timer').innerText = `Aggiornato: ${new Date().toLocaleTimeString()}`;
     }
 
-    // Inizio
-    fetchPrices();
-    setInterval(fetchPrices, 60000); // Aggiorna ogni minuto
-</script>
+    function showInfo(t) {
+        document.getElementById('m-ticker').innerText = t;
+        document.getElementById('m-name').innerText = ETF_INFO[t].n;
+        document.getElementById('m-desc').innerText = ETF_INFO[t].d;
+        document.getElementById('m-forecast').innerText = ETF_INFO[t].f;
+        document.getElementById('modal').style.display = 'flex';
+    }
 
+    function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
+    function openEdit() {
+        const div = document.getElementById('edit-inputs');
+        div.innerHTML = '';
+        for(let t in ETF_INFO) {
+            const d = portfolio[t] || { q: 0, p: 0 };
+            div.innerHTML += `
+                <div style="margin-bottom:15px; border-bottom:1px solid #222; padding-bottom:10px">
+                    <h4 style="color:var(--honor-blue)">${t}</h4>
+                    <label style="font-size:0.6rem">Quote</label>
+                    <input type="number" id="q-${t}" value="${d.q}" style="width:100%; background:#000; border:1px solid #333; padding:8px; border-radius:8px">
+                    <label style="font-size:0.6rem">PMC (€)</label>
+                    <input type="number" id="p-${t}" value="${d.p}" style="width:100%; background:#000; border:1px solid #333; padding:8px; border-radius:8px">
+                </div>
+            `;
+        }
+        document.getElementById('edit-modal').style.display = 'flex';
+    }
+
+    function saveData() {
+        for(let t in ETF_INFO) {
+            portfolio[t] = {
+                q: parseFloat(document.getElementById(`q-${t}`).value) || 0,
+                p: parseFloat(document.getElementById(`p-${t}`).value) || 0
+            };
+        }
+        localStorage.setItem('honor_invest_v3', JSON.stringify(portfolio));
+        document.getElementById('edit-modal').style.display = 'none';
+        render();
+    }
+
+    fetchPrices();
+    setInterval(fetchPrices, 120000);
+</script>
 </body>
 </html>
