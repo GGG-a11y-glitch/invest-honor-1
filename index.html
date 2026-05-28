@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- Meta per farla sembrare un'app nativa su Honor -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000000">
+    <title>Honor Invest Pro</title>
+
+    <style>
+        :root {
+            --bg-black: #000000;
+            --text-primary: #FFFFFF;
+            --text-dim: #777777;
+            --honor-blue: #3b82f6;
+            --status-green: #00e676;
+            --status-red: #ff3b3b;
+            --card-bg: #0c0c0c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; }
+        body { background-color: var(--bg-black); color: var(--text-primary); padding-bottom: 30px; overflow-x: hidden; }
+
+        /* Loader Bar */
+        #loader { position: fixed; top: 0; left: 0; height: 3px; background: var(--honor-blue); width: 0%; z-index: 1000; transition: width 0.4s ease; }
+
+        .container { padding: 18px; max-width: 500px; margin: auto; }
+
+        /* Hero Portfolio */
+        .hero { 
+            background: linear-gradient(135deg, #111, #000); 
+            border-radius: 26px; padding: 25px; margin-bottom: 25px; 
+            border: 1px solid #1a1a1a; text-align: center;
+        }
+        .hero-title { color: var(--text-dim); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+        .hero-value { font-size: 2.5rem; font-weight: 700; margin: 8px 0; color: #fff; }
+
+        /* Grid 2x2 */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .card { 
+            background: var(--card-bg); border-radius: 22px; padding: 18px; 
+            border: 1px solid #1a1a1a; transition: transform 0.1s;
+        }
+        .card:active { transform: scale(0.96); }
+        .ticker { font-weight: 800; font-size: 0.85rem; color: var(--honor-blue); display: block; margin-bottom: 10px; }
+        .price { font-size: 1.2rem; font-weight: 600; }
+        .change { font-size: 0.8rem; margin-top: 4px; font-weight: bold; }
+
+        /* Sparkline (Mini Grafico) */
+        .sparkline { width: 100%; height: 35px; margin-top: 12px; fill: none; stroke-width: 2; }
+
+        /* Scroller Orizzontale */
+        .section-title { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 15px; padding-left: 5px; text-transform: uppercase; }
+        .scroller { display: flex; overflow-x: auto; gap: 12px; padding-bottom: 10px; scrollbar-width: none; }
+        .scroller::-webkit-scrollbar { display: none; }
+        .scroll-card { 
+            min-width: 130px; background: #0c0c0c; padding: 15px; 
+            border-radius: 20px; border: 1px solid #1a1a1a; 
+        }
+
+        /* Commenti Macro */
+        .macro-card { 
+            background: #0a0a0a; border-left: 4px solid var(--honor-blue); 
+            padding: 15px; border-radius: 0 15px 15px 0; margin-bottom: 12px; 
+        }
+        .macro-card h4 { font-size: 0.8rem; color: var(--honor-blue); margin-bottom: 5px; }
+        .macro-card p { font-size: 0.85rem; color: #bbb; line-height: 1.4; }
+
+        /* Glassmorphism Modal */
+        .modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(15px); display: none;
+            justify-content: center; align-items: center; z-index: 2000;
+        }
+        .modal-content {
+            background: #111; width: 85%; padding: 25px;
+            border-radius: 26px; border: 1px solid #333;
+        }
+
+        .pos { color: var(--status-green); }
+        .neg { color: var(--status-red); }
+    </style>
+</head>
+<body>
+
+    <div id="loader"></div>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <div class="hero-title" id="current-date">DATA</div>
+            <div class="hero-value" id="portfolio-total">€ --.---,--</div>
+            <div style="font-size: 0.8rem; color: var(--status-green)">● Mercati Aperti - Intraday Live</div>
+        </div>
+
+        <!-- ETF Principali (Grid) -->
+        <div class="section-title">Core Assets</div>
+        <div class="grid" id="grid-assets">
+            <!-- Dinamico -->
+        </div>
+
+        <!-- Altri Asset (Scroller) -->
+        <div class="section-title">Liquidità & Bond</div>
+        <div class="scroller" id="scroll-assets">
+            <!-- Dinamico -->
+        </div>
+
+        <!-- Macro Insights -->
+        <div class="section-title" style="margin-top: 20px;">Advisor Macro Notes</div>
+        <div id="macro-notes">
+            <div class="macro-card">
+                <h4>Sentiment BCE / Tassi</h4>
+                <p>Focus su XEON: rendimento costante finché i tassi restano stabili. Ottimo per parcheggio liquidità.</p>
+            </div>
+            <div class="macro-card">
+                <h4>Asset Allocation</h4>
+                <p>L'oro (SGLN) funge da bene rifugio. Monitorare correlazione inversa con azionario mondiale (VWCE).</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Dettaglio -->
+    <div class="modal" id="info-modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h2 id="modal-ticker" style="color: var(--honor-blue)"></h2>
+            <p id="modal-desc" style="margin: 15px 0; line-height: 1.6; color: #ccc;"></p>
+            <button onclick="closeModal()" style="width: 100%; background: #222; border: none; color: white; padding: 12px; border-radius: 12px;">Chiudi</button>
+        </div>
+    </div>
+
+    <script>
+        const etfList = [
+            { t: 'VWCE.MI', n: 'Vanguard All-World', type: 'grid', desc: 'L\'ETF definitivo per coprire l\'intero mercato azionario mondiale.' },
+            { t: 'IWMO.MI', n: 'MSCI Momentum', type: 'grid', desc: 'Focus su aziende con trend di crescita più forte negli ultimi 6-12 mesi.' },
+            { t: 'XDEQ.MI', n: 'MSCI Quality', type: 'grid', desc: 'Investe in aziende con bilanci solidi e utili stabili.' },
+            { t: 'SGLN.MI', n: 'Physical Gold', type: 'grid', desc: 'Replica il prezzo dell\'oro fisico. Protezione contro inflazione e crisi.' },
+            { t: 'XEON.MI', n: 'Euro Overnight', type: 'scroll', desc: 'Rendimento monetario basato sul tasso €STR (BCE).' },
+            { t: 'IBGL.MI', n: 'Euro Gov 15-25y', type: 'scroll', desc: 'Titoli di stato Eurozona a lungo termine. Sensibili ai tassi.' },
+            { t: 'VGEA.MI', n: 'Euro Gov All', type: 'scroll', desc: 'Tutti i titoli di stato Eurozona per massima diversificazione bond.' }
+        ];
+
+        function generatePath(isPos) {
+            let points = "";
+            for(let i=0; i<10; i++) {
+                points += `${i*15},${15 + (Math.random() * 20 * (isPos ? -1 : 1))} `;
+            }
+            return points;
+        }
+
+        function updateUI() {
+            const bar = document.getElementById('loader');
+            bar.style.width = '40%';
+            
+            const grid = document.getElementById('grid-assets');
+            const scroll = document.getElementById('scroll-assets');
+            grid.innerHTML = '';
+            scroll.innerHTML = '';
+
+            etfList.forEach(etf => {
+                const change = (Math.random() * 2 - 0.8).toFixed(2);
+                const isPos = change >= 0;
+                const price = (Math.random() * 100 + 50).toFixed(2);
+
+                const cardHtml = `
+                    <div class="card" onclick="showDetail('${etf.t}', '${etf.desc}')">
+                        <span class="ticker">${etf.t}</span>
+                        <div class="price">€${price}</div>
+                        <div class="change ${isPos?'pos':'neg'}">${isPos?'+':''}${change}%</div>
+                        <svg class="sparkline">
+                            <polyline points="${generatePath(isPos)}" stroke="${isPos?'#00e676':'#ff3b3b'}" />
+                        </svg>
+                    </div>
+                `;
+
+                if(etf.type === 'grid') grid.innerHTML += cardHtml;
+                else scroll.innerHTML += `<div class="scroll-card">${cardHtml}</div>`;
+            });
+
+            document.getElementById('portfolio-total').innerText = `€ ${(15420 + Math.random()*50).toLocaleString('it-IT', {minimumFractionDigits: 2})}`;
+            document.getElementById('current-date').innerText = new Date().toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' });
+            
+            bar.style.width = '100%';
+            setTimeout(() => bar.style.width = '0%', 400);
+        }
+
+        function showDetail(ticker, desc) {
+            document.getElementById('modal-ticker').innerText = ticker;
+            document.getElementById('modal-desc').innerText = desc;
+            document.getElementById('info-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('info-modal').style.display = 'none';
+        }
+
+        // Init
+        updateUI();
+        setInterval(updateUI, 10000); // Aggiorna ogni 10 secondi
+    </script>
+</body>
+</html>
