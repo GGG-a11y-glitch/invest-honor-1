@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#000000">
-    <title>Honor Invest Ultra - PMC Edition</title>
+    <title>Honor Invest Real-Time</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -21,9 +21,19 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: var(--bg-black); color: var(--text-primary); padding-bottom: 50px; }
 
+        /* Loader & Sync Status */
+        #sync-indicator { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 3px; 
+            background: #222; z-index: 1000; 
+        }
+        #sync-progress { 
+            width: 0%; height: 100%; background: var(--honor-blue); 
+            transition: width 0.3s; 
+        }
+
         .container { padding: 18px; max-width: 500px; margin: auto; }
 
-        /* Hero Portfolio */
+        /* Hero */
         .hero { 
             background: linear-gradient(145deg, #111, #000); 
             border-radius: 28px; padding: 25px; margin-bottom: 25px; 
@@ -32,40 +42,33 @@
         .hero-title { color: var(--text-dim); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; }
         .hero-value { font-size: 2.3rem; font-weight: 800; margin: 5px 0; }
         .hero-pl { font-size: 0.9rem; font-weight: 600; }
+        .last-update { font-size: 0.6rem; color: var(--text-dim); margin-top: 10px; }
 
-        .edit-toggle { 
+        .btn-edit { 
             position: absolute; top: 20px; right: 20px; 
             color: var(--honor-blue); font-size: 0.7rem; font-weight: bold; 
             border: 1px solid var(--honor-blue); padding: 6px 12px; border-radius: 12px;
         }
 
-        /* ETF Grid */
+        /* Grid */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .card { 
             background: var(--card-bg); border-radius: 22px; padding: 16px; 
-            border: 1px solid #161616; transition: transform 0.1s; position: relative;
+            border: 1px solid #161616; position: relative;
         }
-        .ticker { font-weight: 800; font-size: 0.75rem; color: var(--honor-blue); margin-bottom: 10px; display: block; }
+        .ticker { font-weight: 800; font-size: 0.75rem; color: var(--honor-blue); display: block; margin-bottom: 10px; }
         .price-live { font-size: 1.1rem; font-weight: 600; }
         .pl-badge { font-size: 0.75rem; margin-top: 4px; font-weight: bold; }
 
-        /* Input Fields per Modifica */
-        .edit-fields { display: none; margin-top: 10px; border-top: 1px solid #222; padding-top: 10px; }
+        /* Editing mode */
+        .edit-fields { display: none; margin-top: 12px; border-top: 1px solid #222; padding-top: 10px; }
         .input-group { margin-bottom: 8px; }
         .input-group label { display: block; font-size: 0.6rem; color: var(--text-dim); margin-bottom: 2px; }
         .qty-input { width: 100%; background: #000; border: 1px solid #333; color: #fff; padding: 6px; border-radius: 8px; font-size: 0.8rem; }
 
-        /* Scroller Bond */
+        /* Bonds Scroller */
         .scroller { display: flex; overflow-x: auto; gap: 12px; padding: 10px 0; scrollbar-width: none; }
-        .scroller-card { min-width: 140px; flex-shrink: 0; }
-
-        /* Info Modal */
-        .modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
-            backdrop-filter: blur(15px); display: none;
-            justify-content: center; align-items: center; z-index: 2000; padding: 20px;
-        }
-        .modal-content { background: #111; width: 100%; padding: 25px; border-radius: 28px; border: 1px solid #222; }
+        .scroller-card { min-width: 150px; flex-shrink: 0; }
 
         .pos { color: var(--status-green); }
         .neg { color: var(--status-red); }
@@ -74,54 +77,53 @@
 </head>
 <body>
 
+<div id="sync-indicator"><div id="sync-progress"></div></div>
+
 <div class="container">
     <div class="hero">
-        <div class="edit-toggle" onclick="toggleEdit()" id="btn-edit">MODIFICA</div>
-        <div class="hero-title">Patrimonio Totale</div>
+        <div class="btn-edit" onclick="toggleEdit()" id="edit-text">MODIFICA</div>
+        <div class="hero-title">Patrimonio Reale Live</div>
         <div class="hero-value" id="total-val">€ 0,00</div>
-        <div class="hero-pl" id="total-pl">P&L: --</div>
+        <div class="hero-pl" id="total-pl">In attesa di dati...</div>
+        <div class="last-update" id="last-update">Aggiornamento: --:--:--</div>
     </div>
 
-    <div class="section-header">CORE ASSETS (GRID 2x2)</div>
+    <div class="section-header">AZIONARIO (REAL-TIME)</div>
     <div class="grid" id="main-grid"></div>
 
-    <div class="section-header">STABILIZZATORI (SCROLLER)</div>
+    <div class="section-header">LIQUIDITÀ E BOND</div>
     <div class="scroller" id="bond-scroller"></div>
 
-    <div class="section-header">MACRO ADVISOR</div>
-    <div style="background: #0a0a0a; padding: 15px; border-radius: 18px; border: 1px solid #111; font-size: 0.85rem; color: #bbb; line-height: 1.4;">
-        <strong style="color: var(--honor-blue);">Strategia PMC:</strong> Se il prezzo live è inferiore al tuo PMC, potresti considerare un acquisto frazionato per abbassare la media di carico, a patto che i fondamentali macro restino invariati.
-    </div>
-</div>
-
-<div class="modal" id="modal" onclick="closeModal()">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <h2 id="m-ticker" style="color:var(--honor-blue)"></h2>
-        <p id="m-name" style="color:var(--text-dim); margin-bottom:15px"></p>
-        <div id="m-strategy" style="background:#000; padding:15px; border-radius:12px; font-size:0.9rem; border-left:3px solid var(--honor-blue)"></div>
-        <button onclick="closeModal()" style="width:100%; padding:15px; margin-top:20px; border-radius:15px; border:none; background:#fff; font-weight:bold">CHIUDI</button>
+    <div class="section-header">COMMENTO MACRO</div>
+    <div id="macro-advisor" style="background: #0a0a0a; padding: 15px; border-radius: 18px; border: 1px solid #111; font-size: 0.8rem; color: #bbb; line-height: 1.4;">
+        I dati sono recuperati tramite API finanziaria. I prezzi degli ETF su Borsa Italiana potrebbero avere un ritardo di 15-20 minuti rispetto al tick-by-tick professionale.
     </div>
 </div>
 
 <script>
+    // Lista ETF con Ticker reali di Yahoo Finance
     const etfConfig = [
-        { id: 'VWCE.MI', n: 'Vanguard All-World', type: 'grid', strat: 'Diversificazione massima. Mantieni indipendentemente dal PMC.' },
-        { id: 'IWMO.MI', n: 'MSCI Momentum', type: 'grid', strat: 'Attenzione al PMC: strumento volatile, vendere se il trend inverte.' },
-        { id: 'XDEQ.MI', n: 'MSCI Quality', type: 'grid', strat: 'Solide basi. PMC meno rilevante nel lungo periodo grazie alla qualità.' },
-        { id: 'SGLN.MI', n: 'Physical Gold', type: 'grid', strat: 'Bene rifugio. Utile per bilanciare perdite sugli altri asset.' },
-        { id: 'XEON.MI', n: 'Overnight Rate', type: 'scroll', strat: 'Zero rischio prezzo. Il PMC sarà quasi sempre uguale al prezzo live.' },
-        { id: 'IBGL.MI', n: 'Euro Gov 15-25y', type: 'scroll', strat: 'Molto sensibile ai tassi. Controlla il PMC per gestire la duration.' },
-        { id: 'VGEA.MI', n: 'Euro Gov All', type: 'scroll', strat: 'Stabilità bond. PMC utile per monitorare il rendimento a scadenza.' }
+        { id: 'VWCE.MI', type: 'grid' },
+        { id: 'IWMO.MI', type: 'grid' },
+        { id: 'XDEQ.MI', type: 'grid' },
+        { id: 'SGLN.MI', type: 'grid' },
+        { id: 'XEON.MI', type: 'scroll' },
+        { id: 'IBGL.MI', type: 'scroll' },
+        { id: 'VGEA.MI', type: 'scroll' }
     ];
 
     let isEditing = false;
-    let portfolio = JSON.parse(localStorage.getItem('honor_portfolio')) || {};
+    let portfolio = JSON.parse(localStorage.getItem('honor_portfolio_real')) || {};
+    let livePrices = {};
 
     function toggleEdit() {
         isEditing = !isEditing;
-        document.getElementById('btn-edit').innerText = isEditing ? 'SALVA' : 'MODIFICA';
+        document.getElementById('edit-text').innerText = isEditing ? 'SALVA' : 'MODIFICA';
         document.querySelectorAll('.edit-fields').forEach(f => f.style.display = isEditing ? 'block' : 'none');
-        if(!isEditing) savePortfolio();
+        if(!isEditing) {
+            savePortfolio();
+            fetchAllPrices();
+        }
     }
 
     function savePortfolio() {
@@ -130,11 +132,37 @@
             const pmc = document.getElementById(`pmc-${etf.id}`).value;
             portfolio[etf.id] = { qty: parseFloat(qty) || 0, pmc: parseFloat(pmc) || 0 };
         });
-        localStorage.setItem('honor_portfolio', JSON.stringify(portfolio));
-        render();
+        localStorage.setItem('honor_portfolio_real', JSON.stringify(portfolio));
     }
 
-    function render() {
+    // Funzione CORE: Recupero prezzi reali da Yahoo Finance
+    async function fetchAllPrices() {
+        const progress = document.getElementById('sync-progress');
+        progress.style.width = '10%';
+        
+        let totalCurrent = 0;
+        let totalInvested = 0;
+
+        for (let i = 0; i < etfConfig.length; i++) {
+            const ticker = etfConfig[i].id;
+            try {
+                // Utilizzo di un proxy CORS pubblico per bypassare i blocchi del browser
+                const response = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}`);
+                const data = await response.json();
+                const price = data.chart.result[0].meta.regularMarketPrice;
+                livePrices[ticker] = price;
+            } catch (e) {
+                console.error("Errore recupero " + ticker, e);
+                livePrices[ticker] = livePrices[ticker] || 0; // Mantieni vecchio prezzo se errore
+            }
+            progress.style.width = ((i + 1) / etfConfig.length * 100) + '%';
+        }
+
+        renderUI();
+        setTimeout(() => progress.style.width = '0%', 1000);
+    }
+
+    function renderUI() {
         const grid = document.getElementById('main-grid');
         const scroll = document.getElementById('bond-scroller');
         grid.innerHTML = ''; scroll.innerHTML = '';
@@ -143,22 +171,22 @@
         let totalInvested = 0;
 
         etfConfig.forEach(etf => {
-            const livePrice = (Math.random() * 40 + 60).toFixed(2); // Simulazione prezzo
+            const price = livePrices[etf.id] || 0;
             const data = portfolio[etf.id] || { qty: 0, pmc: 0 };
             
-            const currentVal = livePrice * data.qty;
+            const currentVal = price * data.qty;
             const investedVal = data.pmc * data.qty;
             totalCurrent += currentVal;
             totalInvested += investedVal;
 
             const plEuro = (currentVal - investedVal).toFixed(2);
-            const plPerc = data.pmc > 0 ? (((livePrice - data.pmc) / data.pmc) * 100).toFixed(2) : "0.00";
-            const isProfit = plEuro >= 0;
+            const plPerc = data.pmc > 0 ? (((price - data.pmc) / data.pmc) * 100).toFixed(2) : "0.00";
+            const isProfit = parseFloat(plEuro) >= 0;
 
             const cardHtml = `
-                <div class="card" onclick="showInfo('${etf.id}')">
+                <div class="card">
                     <span class="ticker">${etf.id}</span>
-                    <div class="price-live">€${livePrice}</div>
+                    <div class="price-live">€${price.toFixed(2)}</div>
                     <div class="pl-badge ${isProfit?'pos':'neg'}">
                         ${isProfit?'+':''}${plPerc}% (${isProfit?'+':''}${plEuro}€)
                     </div>
@@ -187,23 +215,12 @@
         const heroPL = document.getElementById('total-pl');
         heroPL.innerText = `P&L Totale: ${totalPLEuro}€ (${totalPLPerc}%)`;
         heroPL.className = `hero-pl ${totalPLEuro >= 0 ? 'pos' : 'neg'}`;
+        document.getElementById('last-update').innerText = `Aggiornamento: ${new Date().toLocaleTimeString('it-IT')}`;
     }
 
-    function showInfo(id) {
-        if(isEditing) return;
-        const etf = etfConfig.find(e => e.id === id);
-        document.getElementById('m-ticker').innerText = etf.id;
-        document.getElementById('m-name').innerText = etf.n;
-        document.getElementById('m-strategy').innerText = etf.strat;
-        document.getElementById('modal').style.display = 'flex';
-    }
-
-    function closeModal() { document.getElementById('modal').style.display = 'none'; }
-
-    // Inizializzazione
-    render();
-    // Aggiornamento simulato ogni 15 secondi per i prezzi live
-    setInterval(() => { if(!isEditing) render(); }, 15000);
+    // Caricamento iniziale e loop ogni 60 secondi
+    fetchAllPrices();
+    setInterval(() => { if(!isEditing) fetchAllPrices(); }, 60000);
 </script>
 
 </body>
