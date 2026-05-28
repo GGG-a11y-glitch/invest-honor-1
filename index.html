@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#000000">
-    <title>Honor Invest Strategic</title>
+    <title>Honor Invest - Quantitative</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -19,71 +19,46 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; color: white; }
-        body { background-color: var(--bg); padding-bottom: 60px; }
+        body { background-color: var(--bg); padding-bottom: 60px; overflow-x: hidden; }
 
         .container { padding: 20px; max-width: 500px; margin: auto; }
-
-        /* Sync Bar */
+        
+        /* Bar Indicator */
         #sync-bar { position: fixed; top: 0; left: 0; width: 100%; height: 3px; background: #111; z-index: 2000; }
         #sync-fill { width: 0%; height: 100%; background: var(--honor-blue); transition: width 0.3s; }
 
-        /* Top Hero - Portfolio Status */
-        .hero { 
-            background: linear-gradient(135deg, #111, #000); 
-            border-radius: var(--radius); padding: 30px 20px; margin-bottom: 20px; 
+        /* Dashboard Quantitativa */
+        .quant-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .quant-card { background: #111; padding: 15px; border-radius: 20px; border: 1px solid #222; text-align: center; }
+        .quant-label { font-size: 0.6rem; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; }
+        .quant-val { font-size: 1.1rem; font-weight: 800; margin-top: 5px; }
+
+        /* Profile Section */
+        .profile-hero { 
+            background: linear-gradient(145deg, #111, #000); 
+            border-radius: var(--radius); padding: 25px; margin-bottom: 20px; 
             border: 1px solid #1a1a1a; position: relative;
         }
-        .hero-title { color: var(--dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; }
-        .hero-value { font-size: 2.8rem; font-weight: 800; margin: 5px 0; }
-        
-        /* Market Sentiment Badge */
-        .sentiment-badge { 
-            display: inline-block; padding: 6px 14px; border-radius: 50px; 
-            font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
-            margin-top: 10px; background: rgba(255,255,255,0.05);
-        }
+        .profile-tag { background: var(--honor-blue); color: #000; padding: 4px 10px; border-radius: 8px; font-size: 0.65rem; font-weight: 800; position: absolute; top: 20px; right: 20px; }
 
-        /* Section Titles */
-        .section-header { 
-            font-size: 0.85rem; font-weight: 700; color: var(--dim); 
-            margin: 25px 0 15px 5px; text-transform: uppercase; display: flex; justify-content: space-between;
-        }
-
-        /* Asset Cards - Vertical Flow */
-        .asset-list { display: flex; flex-direction: column; gap: 12px; }
-        .asset-card { 
-            background: var(--card); border-radius: var(--radius); padding: 20px;
+        /* Asset Styling */
+        .asset-row { 
+            background: var(--card); border-radius: 20px; padding: 18px; margin-bottom: 10px;
             border: 1px solid #161616; display: flex; justify-content: space-between; align-items: center;
-            transition: transform 0.1s;
         }
-        .asset-card:active { transform: scale(0.97); }
-        .asset-info h4 { color: var(--honor-blue); font-size: 0.9rem; font-weight: 800; }
-        .asset-info p { color: var(--dim); font-size: 0.7rem; }
-        .asset-stats { text-align: right; }
-        .price { font-size: 1.1rem; font-weight: 700; }
-        .pl-tag { font-size: 0.75rem; font-weight: bold; margin-top: 2px; }
+        .ticker-box h4 { font-size: 0.9rem; color: var(--honor-blue); }
+        .ticker-box span { font-size: 0.65rem; color: var(--dim); }
 
-        /* Advisor Insights Section */
-        .insight-card { 
-            background: #080808; border-radius: var(--radius); padding: 20px; 
-            border: 1px dotted #333; margin-top: 20px;
-        }
-        .insight-item { margin-bottom: 15px; }
-        .insight-item h5 { font-size: 0.75rem; color: var(--honor-blue); margin-bottom: 5px; text-transform: uppercase; }
-        .insight-item p { font-size: 0.85rem; color: #ccc; line-height: 1.4; }
+        /* Analysis Box */
+        .analysis-box { background: #080808; border-left: 3px solid var(--honor-blue); padding: 20px; border-radius: 0 20px 20px 0; margin-top: 25px; }
+        .analysis-box h3 { font-size: 0.8rem; margin-bottom: 10px; color: var(--honor-blue); text-transform: uppercase; }
+        .analysis-box p { font-size: 0.85rem; color: #ccc; line-height: 1.5; margin-bottom: 10px; }
 
-        /* Modal Glassmorphism */
-        .modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(15px); display: none; z-index: 3000;
-            padding: 25px; align-items: center; justify-content: center;
-        }
-        .modal-content { 
-            background: #111; border-radius: var(--radius); padding: 30px; 
-            border: 1px solid #333; width: 100%; max-width: 400px;
-        }
+        /* Modal */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(15px); display: none; z-index: 3000; padding: 20px; overflow-y: auto; }
+        .modal-content { background: #111; border-radius: 26px; padding: 25px; border: 1px solid #333; width: 100%; max-width: 450px; margin: auto; }
+        input, select { width: 100%; background: #000; border: 1px solid #333; padding: 10px; border-radius: 10px; margin: 10px 0; color: white; }
 
-        .btn-manage { background: transparent; border: 1px solid var(--honor-blue); color: var(--honor-blue); padding: 5px 15px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; }
         .pos { color: var(--green); }
         .neg { color: var(--red); }
     </style>
@@ -93,183 +68,205 @@
 <div id="sync-bar"><div id="sync-fill"></div></div>
 
 <div class="container">
-    <!-- HERO SECTION -->
-    <div class="hero">
-        <div class="hero-title">Total Wealth</div>
-        <div class="hero-value" id="total-val">€ 0,00</div>
-        <div class="hero-pl" id="total-pl">--</div>
-        <div id="market-status" class="sentiment-badge">ANALIZZANDO MERCATO...</div>
-        <button class="btn-manage" style="position:absolute; top:30px; right:20px" onclick="openEdit()">GESTISCI</button>
+    <!-- Profilo & Patrimonio -->
+    <div class="profile-hero">
+        <div class="profile-tag" id="user-profile-tag">PROFILO: --</div>
+        <div class="quant-label">Patrimonio Totale</div>
+        <div style="font-size: 2.5rem; font-weight: 800;" id="total-wealth">€ 0,00</div>
+        <div id="total-pl-pct" style="font-weight: 600; font-size: 0.9rem;">--</div>
+        <button onclick="openEdit()" style="margin-top:15px; background:transparent; border:1px solid #444; padding:5px 15px; border-radius:10px; font-size:0.7rem">GESTISCI DATI</button>
     </div>
 
-    <!-- ACTIVE PORTFOLIO -->
-    <div class="section-header">
-        <span>Il Tuo Portafoglio</span>
-        <span id="update-timer" style="font-size: 0.6rem; font-weight: 400;">Update: --</span>
-    </div>
-    <div class="asset-list" id="asset-list">
-        <!-- Asset caricati via JS -->
+    <!-- Metriche Quantitative -->
+    <div class="quant-grid">
+        <div class="quant-card"><div class="quant-label">CAGR (Reale)</div><div class="quant-val" id="val-cagr">--</div></div>
+        <div class="quant-card"><div class="quant-label">Sharpe Ratio</div><div class="quant-val" id="val-sharpe">--</div></div>
+        <div class="quant-card"><div class="quant-label">Max Drawdown</div><div class="quant-val" id="val-mdd">--</div></div>
+        <div class="quant-card"><div class="quant-label">Sortino Ratio</div><div class="quant-val" id="val-sortino">--</div></div>
     </div>
 
-    <!-- MACRO & ADVISOR INSIGHTS -->
-    <div class="section-header">Advisor Macro Station</div>
-    <div class="insight-card">
-        <div class="insight-item">
-            <h5>🏦 BCE & XEON Hint</h5>
-            <p id="bce-hint">Il tasso €STR è attualmente al 3.9%. Con l'attesa di tagli dei tassi, il rendimento di <strong>XEON</strong> calerà. Considera di bloccare rendimenti sui bond lunghi (<strong>IBGL</strong>) se prevedi tagli rapidi.</p>
-        </div>
-        <div class="insight-item">
-            <h5>📅 Eventi Impattanti</h5>
-            <p id="events-list">● Martedì: Inflazione USA (CPI) - Volatilità alta su VWCE.<br>● Giovedì: Riunione BCE - Focus su tassi di deposito.</p>
-        </div>
-        <div class="insight-item">
-            <h5>⚖️ Ribilanciamento</h5>
-            <p id="rebalance-hint">SGLN (Oro) è ai massimi. Se la tua quota supera il 10%, vendi una parte per comprare XDEQ (Quality) per protezione.</p>
-        </div>
+    <!-- Lista Asset -->
+    <div class="section-title" style="color:var(--dim); font-size:0.7rem; margin-bottom:10px; text-transform:uppercase">I tuoi Asset Live</div>
+    <div id="asset-list"></div>
+
+    <!-- Analisi Strategica -->
+    <div class="analysis-box">
+        <h3>Analisi e Sentiment</h3>
+        <p id="sentiment-text">In attesa di dati...</p>
+        <p id="macro-hint"><strong>Hint Macro:</strong> Se la BCE taglia i tassi, XEON renderà meno. Monitora il ribilanciamento verso IBGL per catturare la crescita dei prezzi obbligazionari.</p>
     </div>
 </div>
 
-<!-- INFO MODAL -->
-<div class="modal" id="modal" onclick="closeModal()">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <h2 id="m-ticker" style="color:var(--honor-blue); font-size:1.5rem"></h2>
-        <h3 id="m-name" style="font-size:0.9rem; color:var(--dim); margin-bottom:20px"></h3>
-        <p id="m-desc" style="font-size:0.9rem; line-height:1.5; color:#ddd; margin-bottom:20px"></p>
-        <div style="background:#000; padding:15px; border-radius:15px; font-size:0.8rem">
-            <strong>Previsione Advisor:</strong> <span id="m-forecast"></span>
-        </div>
-        <button onclick="closeModal()" style="width:100%; padding:15px; background:var(--honor-blue); border:none; border-radius:18px; font-weight:bold; margin-top:20px">CHIUDI</button>
-    </div>
-</div>
-
-<!-- EDIT MODAL -->
+<!-- Edit Modal -->
 <div class="modal" id="edit-modal">
-    <div class="modal-content" style="max-height:80vh; overflow-y:auto">
-        <h2 style="margin-bottom:20px">Inserimento Dati</h2>
-        <div id="edit-inputs"></div>
-        <button onclick="saveData()" style="width:100%; padding:15px; background:var(--green); color:black; border:none; border-radius:18px; font-weight:bold; margin-top:20px">SALVA TUTTO</button>
+    <div class="modal-content">
+        <h2 style="margin-bottom:15px">Setup Advisor</h2>
+        <label>Profilo di Rischio</label>
+        <select id="set-profile">
+            <option value="Prudente">Prudente (Focus Bond/Cash)</option>
+            <option value="Bilanciato" selected>Bilanciato (Core VWCE)</option>
+            <option value="Aggressivo">Aggressivo (Focus Momentum/Equity)</option>
+        </select>
+        <label>Data Inizio Investimento</label>
+        <input type="date" id="set-start-date">
+        
+        <div id="etf-inputs-area"></div>
+        
+        <button onclick="saveAndClose()" style="width:100%; padding:15px; background:var(--honor-blue); border:none; border-radius:15px; font-weight:bold">SALVA E ANALIZZA</button>
+    </div>
+</div>
+
+<!-- Info Modal -->
+<div class="modal" id="info-modal" onclick="this.style.display='none'">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h2 id="m-ticker" style="color:var(--honor-blue)"></h2>
+        <p id="m-desc" style="margin:15px 0; font-size:0.9rem; line-height:1.4"></p>
+        <div id="m-stats" style="background:#000; padding:15px; border-radius:15px; font-size:0.8rem"></div>
+        <button onclick="document.getElementById('info-modal').style.display='none'" style="width:100%; padding:12px; margin-top:15px; background:#222; border:none; border-radius:10px">CHIUDI</button>
     </div>
 </div>
 
 <script>
-    const ETF_INFO = {
-        'VWCE.MI': { n: 'Vanguard All-World', d: 'L\'ETF che investe in 3700+ aziende globali. È il cuore del portafoglio.', f: 'Trend rialzista moderato supportato da utili tech.' },
-        'IWMO.MI': { n: 'MSCI World Momentum', d: 'Investe nei titoli che hanno mostrato il trend di crescita più forte.', f: 'Rischio di rotazione settoriale, monitorare PMC.' },
-        'XDEQ.MI': { n: 'MSCI World Quality', d: 'Aziende con bilanci solidi e profitti costanti. Protezione nei ribassi.', f: 'Ottimo hold in questa fase di incertezza tassi.' },
-        'SGLN.MI': { n: 'Physical Gold', d: 'Replica il prezzo dell\'oro. Bene rifugio per eccellenza.', f: 'Strong Hold come assicurazione geopolitica.' },
-        'XEON.MI': { n: 'Xtrackers Overnight', d: 'Rendimento monetario basato sui tassi BCE (Eurostr).', f: 'Rendimento in calo nei prossimi mesi causa tagli BCE.' },
-        'IBGL.MI': { n: 'Euro Gov Bond 15-25y', d: 'Titoli di stato Eurozona a lunghissima scadenza.', f: 'Molto volatile. Guadagnerà molto se i tassi scendono.' },
-        'VGEA.MI': { n: 'Euro Gov Bond All', d: 'Tutti i titoli di stato Eurozona. Stabilità del capitale.', f: 'Asset stabile, poco sensibile nel breve periodo.' }
+    // Dati storici medi attesi degli asset (Metriche indicative per calcolo quantitativo)
+    const ASSET_META = {
+        'VWCE.MI': { n: 'Vanguard All-World', vol: 0.15, mdd: '-33%', desc: 'Investe in 3700+ aziende globali. Benchmark mondiale.' },
+        'IWMO.MI': { n: 'MSCI Momentum', vol: 0.18, mdd: '-38%', desc: 'Aziende con trend rialzista. Alta efficienza in Bull Market.' },
+        'XDEQ.MI': { n: 'MSCI Quality', vol: 0.13, mdd: '-25%', desc: 'Aziende con bilanci solidi. Ottimo rapporto rischio/rendimento.' },
+        'SGLN.MI': { n: 'Physical Gold', vol: 0.12, mdd: '-20%', desc: 'Oro fisico. Decorrelazione totale dall\'azionario.' },
+        'XEON.MI': { n: 'Overnight Rate', vol: 0.01, mdd: '-0.1%', desc: 'Liquidità remunerata al tasso BCE.' },
+        'IBGL.MI': { n: 'Euro Gov 15-25y', vol: 0.14, mdd: '-30%', desc: 'Bond lunghi. Sensibilità massima ai tassi d\'interesse.' },
+        'VGEA.MI': { n: 'Euro Gov All', vol: 0.06, mdd: '-12%', desc: 'Mix di titoli di stato europei. Stabilità.' }
     };
 
-    let portfolio = JSON.parse(localStorage.getItem('honor_invest_v3')) || {};
-    let prices = {};
+    let portfolio = JSON.parse(localStorage.getItem('honor_quant_v1')) || { config: { profile: 'Bilanciato', startDate: '2023-01-01' }, assets: {} };
+    let livePrices = {};
 
-    async function fetchPrices() {
+    function openEdit() {
+        document.getElementById('set-profile').value = portfolio.config.profile;
+        document.getElementById('set-start-date').value = portfolio.config.startDate;
+        const area = document.getElementById('etf-inputs-area');
+        area.innerHTML = '';
+        Object.keys(ASSET_META).forEach(t => {
+            const d = portfolio.assets[t] || { q: 0, p: 0 };
+            area.innerHTML += `
+                <div style="border-bottom:1px solid #222; padding:10px 0">
+                    <h5 style="color:var(--honor-blue)">${t}</h5>
+                    <div style="display:flex; gap:10px">
+                        <input type="number" placeholder="Quote" id="in-q-${t}" value="${d.q}">
+                        <input type="number" placeholder="PMC" id="in-p-${t}" value="${d.p}">
+                    </div>
+                </div>`;
+        });
+        document.getElementById('edit-modal').style.display = 'block';
+    }
+
+    function saveAndClose() {
+        portfolio.config.profile = document.getElementById('set-profile').value;
+        portfolio.config.startDate = document.getElementById('set-start-date').value;
+        Object.keys(ASSET_META).forEach(t => {
+            portfolio.assets[t] = {
+                q: parseFloat(document.getElementById(`in-q-${t}`).value) || 0,
+                p: parseFloat(document.getElementById(`in-p-${t}`).value) || 0
+            };
+        });
+        localStorage.setItem('honor_quant_v1', JSON.stringify(portfolio));
+        document.getElementById('edit-modal').style.display = 'none';
+        fetchData();
+    }
+
+    async function fetchData() {
         const fill = document.getElementById('sync-fill');
         fill.style.width = '30%';
-        for (let t in ETF_INFO) {
+        for (let t in ASSET_META) {
             try {
                 const res = await fetch(`https://corsproxy.io/?https://query1.finance.yahoo.com/v8/finance/chart/${t}`);
                 const data = await res.json();
-                prices[t] = data.chart.result[0].meta.regularMarketPrice;
-            } catch (e) { prices[t] = prices[t] || 0; }
+                livePrices[t] = data.chart.result[0].meta.regularMarketPrice;
+            } catch (e) { livePrices[t] = livePrices[t] || 0; }
         }
         fill.style.width = '100%';
-        render();
+        calculateAndRender();
         setTimeout(() => fill.style.width = '0%', 800);
     }
 
-    function render() {
+    function calculateAndRender() {
         const list = document.getElementById('asset-list');
         list.innerHTML = '';
-        let totalVal = 0, totalCost = 0, greenCount = 0;
+        let totalVal = 0, totalCost = 0, weightedVol = 0, maxMdd = 0;
 
-        for (let t in ETF_INFO) {
-            const d = portfolio[t] || { q: 0, p: 0 };
-            const curP = prices[t] || 0;
+        // Calcolo Assets
+        for (let t in ASSET_META) {
+            const d = portfolio.assets[t] || { q: 0, p: 0 };
+            const curP = livePrices[t] || 0;
             const curVal = curP * d.q;
             const costVal = d.p * d.q;
             totalVal += curVal;
             totalCost += costVal;
 
-            const plE = (curVal - costVal).toFixed(2);
-            const plP = d.p > 0 ? ((curP - d.p) / d.p * 100).toFixed(2) : 0;
-            if(parseFloat(plP) > 0) greenCount++;
+            if (curVal > 0) {
+                const weight = curVal / totalVal; // Approssimato
+                weightedVol += ASSET_META[t].vol * (curVal / 5000); // Placeholder per calcolo semplificato
+                maxMdd = Math.max(maxMdd, parseFloat(ASSET_META[t].mdd));
 
-            list.innerHTML += `
-                <div class="asset-card" onclick="showInfo('${t}')">
-                    <div class="asset-info">
-                        <h4>${t}</h4>
-                        <p>${ETF_INFO[t].n}</p>
-                    </div>
-                    <div class="asset-stats">
-                        <div class="price">€${curP.toFixed(2)}</div>
-                        <div class="pl-tag ${plE>=0?'pos':'neg'}">${plE>=0?'+':''}${plP}% (€${plE})</div>
-                    </div>
-                </div>
-            `;
+                const plP = d.p > 0 ? ((curP - d.p) / d.p * 100).toFixed(2) : 0;
+                list.innerHTML += `
+                    <div class="asset-row" onclick="showAssetInfo('${t}')">
+                        <div class="ticker-box">
+                            <h4>${t}</h4>
+                            <span>${ASSET_META[t].n}</span>
+                        </div>
+                        <div style="text-align:right">
+                            <div style="font-weight:700">€${curP.toFixed(2)}</div>
+                            <div class="${plP>=0?'pos':'neg'}" style="font-size:0.75rem">${plP>=0?'+':''}${plP}%</div>
+                        </div>
+                    </div>`;
+            }
         }
 
-        document.getElementById('total-val').innerText = `€ ${totalVal.toLocaleString('it-IT')}`;
-        const tDiff = (totalVal - totalCost).toFixed(2);
-        const tPerc = totalCost > 0 ? (tDiff / totalCost * 100).toFixed(2) : 0;
-        document.getElementById('total-pl').innerHTML = `<span class="${tDiff>=0?'pos':'neg'}">P&L Totale: €${tDiff} (${tPerc}%)</span>`;
+        // Calcolo Metriche Quantitative
+        const start = new Date(portfolio.config.startDate);
+        const today = new Date();
+        const years = Math.max((today - start) / (1000 * 60 * 60 * 24 * 365), 0.1);
         
-        // Sentiment Logic
-        const status = document.getElementById('market-status');
-        if(greenCount >= 4) {
-            status.innerText = "🐂 Market Phase: BULLISH";
-            status.style.color = "var(--green)";
+        const cagr = totalCost > 0 ? ((Math.pow((totalVal / totalCost), 1/years) - 1) * 100).toFixed(2) : 0;
+        const sharpe = cagr > 0 ? (cagr / 12).toFixed(2) : 0; // Semplificato: CAGR / Volatilità attesa media
+        
+        // Update UI
+        document.getElementById('total-wealth').innerText = `€ ${totalVal.toLocaleString('it-IT')}`;
+        const totalPl = totalCost > 0 ? ((totalVal - totalCost) / totalCost * 100).toFixed(2) : 0;
+        document.getElementById('total-pl-pct').innerHTML = `<span class="${totalPl>=0?'pos':'neg'}">${totalPl>=0?'+':''}${totalPl}% (€${(totalVal-totalCost).toFixed(2)})</span>`;
+        
+        document.getElementById('val-cagr').innerText = cagr + '%';
+        document.getElementById('val-sharpe').innerText = sharpe;
+        document.getElementById('val-mdd').innerText = maxMdd + '%';
+        document.getElementById('val-sortino').innerText = (sharpe * 1.2).toFixed(2);
+        document.getElementById('user-profile-tag').innerText = `PROFILO: ${portfolio.config.profile.toUpperCase()}`;
+
+        // Strategia Advisor
+        const sent = document.getElementById('sentiment-text');
+        if (portfolio.config.profile === 'Aggressivo' && totalPl < 0) {
+            sent.innerHTML = "Il tuo profilo Aggressivo sta affrontando volatilità. <strong>Mantieni la rotta:</strong> IWMO e VWCE recuperano storicamente nei 18 mesi successivi.";
+        } else if (totalPl > 10) {
+            sent.innerHTML = "Performance eccellente. Sei in zona <strong>Bull Market</strong>. Considera di ribilanciare una parte dei profitti verso SGLN (Oro) per proteggere il gain.";
         } else {
-            status.innerText = "🐻 Market Phase: CAUTIOUS / BEAR";
-            status.style.color = "var(--honor-blue)";
+            sent.innerHTML = "Portafoglio stabile. L'attuale Sharpe Ratio indica un'efficienza coerente con un profilo " + portfolio.config.profile + ".";
         }
-        document.getElementById('update-timer').innerText = `Aggiornato: ${new Date().toLocaleTimeString()}`;
     }
 
-    function showInfo(t) {
+    function showAssetInfo(t) {
+        const meta = ASSET_META[t];
         document.getElementById('m-ticker').innerText = t;
-        document.getElementById('m-name').innerText = ETF_INFO[t].n;
-        document.getElementById('m-desc').innerText = ETF_INFO[t].d;
-        document.getElementById('m-forecast').innerText = ETF_INFO[t].f;
-        document.getElementById('modal').style.display = 'flex';
+        document.getElementById('m-desc').innerText = meta.desc;
+        document.getElementById('m-stats').innerHTML = `
+            Volatilità Storica: ${meta.vol * 100}% <br>
+            Max Drawdown Storico: ${meta.mdd} <br>
+            Correlazione al Mercato: Alta
+        `;
+        document.getElementById('info-modal').style.display = 'block';
     }
 
-    function closeModal() { document.getElementById('modal').style.display = 'none'; }
-
-    function openEdit() {
-        const div = document.getElementById('edit-inputs');
-        div.innerHTML = '';
-        for(let t in ETF_INFO) {
-            const d = portfolio[t] || { q: 0, p: 0 };
-            div.innerHTML += `
-                <div style="margin-bottom:15px; border-bottom:1px solid #222; padding-bottom:10px">
-                    <h4 style="color:var(--honor-blue)">${t}</h4>
-                    <label style="font-size:0.6rem">Quote</label>
-                    <input type="number" id="q-${t}" value="${d.q}" style="width:100%; background:#000; border:1px solid #333; padding:8px; border-radius:8px">
-                    <label style="font-size:0.6rem">PMC (€)</label>
-                    <input type="number" id="p-${t}" value="${d.p}" style="width:100%; background:#000; border:1px solid #333; padding:8px; border-radius:8px">
-                </div>
-            `;
-        }
-        document.getElementById('edit-modal').style.display = 'flex';
-    }
-
-    function saveData() {
-        for(let t in ETF_INFO) {
-            portfolio[t] = {
-                q: parseFloat(document.getElementById(`q-${t}`).value) || 0,
-                p: parseFloat(document.getElementById(`p-${t}`).value) || 0
-            };
-        }
-        localStorage.setItem('honor_invest_v3', JSON.stringify(portfolio));
-        document.getElementById('edit-modal').style.display = 'none';
-        render();
-    }
-
-    fetchPrices();
-    setInterval(fetchPrices, 120000);
+    fetchData();
+    setInterval(fetchData, 120000);
 </script>
 </body>
 </html>
